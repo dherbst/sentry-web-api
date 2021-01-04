@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 
@@ -41,9 +42,12 @@ func Organizations(ctx context.Context) {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
-	for _, o := range orgs {
-		fmt.Printf("%v\n", o)
+	result, err := json.MarshalIndent(orgs, "", "  ")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
 	}
+	fmt.Println(string(result))
 }
 
 func main() {
