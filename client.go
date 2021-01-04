@@ -1,6 +1,8 @@
 package sentry
 
 import (
+	"io/ioutil"
+	"net/http"
 	"os"
 	"time"
 )
@@ -42,4 +44,32 @@ func NewClient(domain string, seconds int, authToken string) *Client {
 		AuthToken: authToken,
 	}
 	return c
+}
+
+// APIGet calls the API passing in the bearer token.
+func (c *Client) APIGet(path string) ([]byte, error) {
+	url := c.Domain + path
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/json")
+	if c.AuthToken != "" {
+		req.Header.Set("Authorization", "Bearer "+c.AuthToken)
+	}
+	client := http.Client{
+		Timeout: c.Timeout,
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
 }

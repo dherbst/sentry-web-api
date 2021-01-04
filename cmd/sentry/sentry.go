@@ -14,6 +14,7 @@ func init() {
 	funcMap = map[string]func(context.Context){
 		"help":    Usage,
 		"version": Version,
+		"orgs":    Organizations,
 	}
 }
 
@@ -30,6 +31,19 @@ Usage:
 sentry version                              ; prints the commit version
 `)
 
+}
+
+// Organizations prints the orgs you have access to.
+func Organizations(ctx context.Context) {
+	client := sentry.NewClient("", 0, "")
+	orgs, err := client.OrganizationList(false, "")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	for _, o := range orgs {
+		fmt.Printf("%v\n", o)
+	}
 }
 
 func main() {
