@@ -17,6 +17,7 @@ func init() {
 		"version":  Version,
 		"orgs":     Organizations,
 		"projects": Projects,
+		"events":   Events,
 	}
 }
 
@@ -31,6 +32,9 @@ func Usage(ctx context.Context) {
 Usage:
 
 sentry version                              ; prints the commit version
+sentry orgs                                 ; prints the Organizations you can access
+sentry projects                             ; prints the Projects you can access
+sentry events org_slug project_slug         ; prints the events in the project
 `)
 
 }
@@ -60,6 +64,25 @@ func Projects(ctx context.Context) {
 		return
 	}
 	result, err := json.MarshalIndent(projects, "", "  ")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Println(string(result))
+}
+
+// Events prints the events in the project.  Requires org_slug and project_slug
+func Events(ctx context.Context) {
+	orgSlug := flag.Arg(1)
+	projectSlug := flag.Arg(2)
+
+	client := sentry.NewClient("", 0, "")
+	events, err := client.EventList(orgSlug, projectSlug, false, "")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	result, err := json.MarshalIndent(events, "", "  ")
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
