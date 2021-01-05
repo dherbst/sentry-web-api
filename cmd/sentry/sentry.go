@@ -6,16 +6,17 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/dherbst/sentry"
+	"github.com/dherbst/sentry-web-api"
 )
 
 var funcMap map[string]func(context.Context)
 
 func init() {
 	funcMap = map[string]func(context.Context){
-		"help":    Usage,
-		"version": Version,
-		"orgs":    Organizations,
+		"help":     Usage,
+		"version":  Version,
+		"orgs":     Organizations,
+		"projects": Projects,
 	}
 }
 
@@ -43,6 +44,22 @@ func Organizations(ctx context.Context) {
 		return
 	}
 	result, err := json.MarshalIndent(orgs, "", "  ")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Println(string(result))
+}
+
+// Projects prints the projects you have access to.
+func Projects(ctx context.Context) {
+	client := sentry.NewClient("", 0, "")
+	projects, err := client.ProjectList("")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	result, err := json.MarshalIndent(projects, "", "  ")
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return

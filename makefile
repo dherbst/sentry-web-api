@@ -21,7 +21,7 @@ lint:
 
 lint-in-container:
 	go get -u golang.org/x/lint/golint
-	golint github.com/dherbst/sentry
+	golint github.com/dherbst/sentry-web-api
 	golint github.com/dherbst/sentry-web-api/cmd/sentry/...
 
 sec:

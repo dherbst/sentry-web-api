@@ -45,7 +45,7 @@ func (o Organization) String() string {
 	return result
 }
 
-// List returns the list of Organizations available to the authenticated session.
+// OrganizationList returns the list of Organizations available to the authenticated session.
 func (c *Client) OrganizationList(owner bool, cursor string) ([]Organization, error) {
 	response, err := c.APIGet("organizations/")
 	if err != nil {
